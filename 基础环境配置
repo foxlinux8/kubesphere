@@ -1,0 +1,72 @@
+系统centos7.9
+
+#关闭防火墙
+systemctl stop firewalld
+systemctl disable firewalld
+
+#关闭selinux
+sed -i 's/enforcing/disabled/' /etc/selinux/config  # 永久
+
+
+#关闭swap分区
+sed -ri 's/.*swap.*/#&/' /etc/fstab    # 永久
+
+#主机名配置
+vim /etc/hosts
+
+# 将桥接的IPv4流量传递到iptables的链
+cat > /etc/sysctl.d/k8s.conf << EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system  # 生效
+
+
+# centos/redhat
+yum install -y socat
+
+# 监听事件流的工具
+yum install -y conntrack
+
+yum install -y nfs-utils
+
+
+# 时间同步
+yum install ntpdate -y
+ntpdate time.windows.com
+
+
+#########安装docker############
+#1. 卸载旧版本docker
+yum remove docker \
+docker-client \
+docker-client-latest \
+docker-common \
+docker-latest \
+docker-latest-logrotate \
+docker-logrotate \
+docker-engine
+
+#2. 配置yum源
+yum install -y yum-utils
+yum-config-manager \
+--add-repo \
+https://download.docker.com/linux/centos/docker-ce.repo
+
+#3. 安装docker
+yum install docker-ce docker-ce-cli containerd.io -y
+
+#4. 配置镜像加速
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://fdaihaw8.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+#重启
+init 6
+                  
+        
