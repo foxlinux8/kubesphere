@@ -66,6 +66,17 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
+
+#配置ssh
+ssh-keygen
+
+ssh 172.18.16.112
+ssh 172.18.16.113
+ssh 172.18.16.114
+ssh 172.18.16.115
+
+
+
 #重启
 init 6
                   
