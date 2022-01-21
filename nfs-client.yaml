@@ -1,0 +1,5 @@
+nfs:
+  server: "172.18.16.115"    # This is the server IP address. Replace it with your own.
+  path: "/data/kubesphere"    # Replace the exported directory with your own.
+storageClass:
+  defaultClass: false
