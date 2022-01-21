@@ -1,0 +1,15 @@
+#创建共享目录
+mkdir -p /data/kubesphere
+
+#配置nfs-server
+cat >> /etc/exports << EOF
+/data/kubesphere *(rw,sync,no_root_squash)
+EOF
+
+#启动nfs-server
+systemctl reload daemon-reload
+systemctl restart nfs-server
+systemctl enable nfs-server
+
+#查看是否配置成功
+showmount -e 172.18.16.115
