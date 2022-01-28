@@ -1,0 +1,54 @@
+#参考 https://v3-1.docs.kubesphere.io/zh/docs/installing-on-linux/cluster-operation/add-new-nodes/
+
+#编辑config-sample.yaml文件，新增node5为工作节点
+
+#执行下列命令增加node5
+./kk add nodes -f config-sample.yaml
+
+
+apiVersion: kubekey.kubesphere.io/v1alpha1
+kind: Cluster
+metadata:
+  name: sample
+spec:
+  hosts:
+  - {name: node1, address: 172.18.16.111, internalAddress: 172.18.16.111, user: root, password: Abc456123}
+  - {name: node2, address: 172.18.16.112, internalAddress: 172.18.16.112, user: root, password: Abc456123}
+  - {name: node3, address: 172.18.16.113, internalAddress: 172.18.16.113, user: root, password: Abc456123}
+  - {name: node4, address: 172.18.16.114, internalAddress: 172.18.16.114, user: root, password: Abc456123}
+  - {name: node5, address: 172.18.16.116, internalAddress: 172.18.16.116, user: root, password: Abc456123}
+  roleGroups:
+    etcd:
+    - node1
+    - node2
+    - node3
+    master:
+    - node1
+    - node2
+    - node3
+    worker:
+    - node4
+    - node5
+  controlPlaneEndpoint:
+    domain: lb.kubesphere.local
+    address: "172.18.16.115"
+    port: 6443
+  kubernetes:
+    version: v1.19.8
+    imageRepo: kubesphere
+    clusterName: cluster.local
+  network:
+    plugin: calico
+    kubePodsCIDR: 10.233.64.0/18
+    kubeServiceCIDR: 10.233.0.0/18
+  registry:
+    registryMirrors: []
+    insecureRegistries: []
+  addons:
+  - name: nfs-client
+    namespace: kube-system
+    sources:
+      chart:
+        name: nfs-client-provisioner
+        repo: https://charts.kubesphere.io/main
+        valuesFile: /root/nfs-client.yaml
