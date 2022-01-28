@@ -1,0 +1,9 @@
+#查看证书到期时间
+kubeadm alpha certs check-expiration
+./kk certs check-expiration
+cd /etc/kubernetes/pki/
+openssl x509 -in apiserver-kubelet-client.crt  -noout -text
+
+
+#renew证书，正式环境未经测试慎重执行
+./kk certs renew
